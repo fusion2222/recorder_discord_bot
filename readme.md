@@ -8,17 +8,9 @@ Simple discord bot
 In order to run Recorder Discord Bot, you must have following installed:
 
 - Any -nix Operating System
-- python 3
+- python 3.7
 - virtualenv
-- sqlite3
-
-
-## How to install
-
-Follow these steps:
-	
-- Make sure you have Python 3.7 installed
-- Install `ffmpeg` on your system using package manager `apt-get`, `apt`, `brew`...
+- `ffmpeg` using package manager like `apt-get`, `apt`, `brew`...
 
 
 ## How to initialize and run
