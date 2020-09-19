@@ -90,10 +90,13 @@ class CustomClient(discord.Client):
 		
 		guild = discord.utils.get(self.guilds, name=settings.DISCORD_GUILD)
 
-		print(
-			f'{self.user} is connected to the following guild:\n'
-			f'{guild.name}(id: {guild.id})'
-		)
+		if guild:
+			print(
+				f'{self.user} is connected to the following guild:\n'
+				f'{guild.name}(id: {guild})'
+			)
+		else:
+			print(f'[+] Cannot join to server {settings.DISCORD_GUILD}')
 
 	async def on_message(self, message):
 		if not is_bot_commander(message.author) or message.content not in ('!rec_start', '!rec_stop'):
