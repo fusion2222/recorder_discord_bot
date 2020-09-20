@@ -1,22 +1,22 @@
 # Announcer - Discord bot
 
-Simple discord bot
-
+Simple discord bot, which announces voice recordings in text channel along with sound effects.
 
 ## Prerequisites
 
-In order to run Recorder Discord Bot, you must have following installed:
-
-- Any -nix Operating System
-- python 3.7
-- virtualenv
-- `ffmpeg` using package manager like `apt-get`, `apt`, `brew`...
-
+In order to run Recorder Discord Bot, you must have Docker installed.
 
 ## How to initialize and run
 
-Run `./run.sh`
+- Copy locally conf.example.json -> conf.json and configure it
+- Build and run docker image
 
+
+### Out-of-docker development
+
+If for some reason you must try something or develop outside docker:
+
+- Run `./run.sh`
 
 ### Mac OS - SSL Certificate error
 
