@@ -1,6 +1,7 @@
 import asyncio
 from datetime import datetime
 import os
+import logging
 
 import discord
 
@@ -10,8 +11,10 @@ from utils import (
 	unprefix_channel_name, seconds_to_digital
 )
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-print('[+] Initializing bot..')
+logger.info('[+] Initializing bot..')
 
 
 class CustomClient(discord.Client):
@@ -102,17 +105,17 @@ class CustomClient(discord.Client):
 
 
 	async def on_ready(self):
-		print(f'{self.user} has connected to Discord!')
+		logger.info(f'{self.user} has connected to Discord!')
 		
 		guild = discord.utils.get(self.guilds, name=settings.DISCORD_GUILD)
 
 		if guild:
-			print(
+			logger.info(
 				f'{self.user} is connected to the following guild:\n'
 				f'{guild.name}(id: {guild})'
 			)
 		else:
-			print(f'[+] Cannot join to server {settings.DISCORD_GUILD}')
+			logger.error(f'[+] Cannot join to server {settings.DISCORD_GUILD}')
 
 	async def on_message(self, message):
 		if not is_bot_commander(message.author) or message.content not in self.COMMANDS:
