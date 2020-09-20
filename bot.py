@@ -1,7 +1,8 @@
 import asyncio
 from datetime import datetime
-import os
 import logging
+import os
+import sys
 
 import discord
 
@@ -13,7 +14,9 @@ from utils import (
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
+logger.addHandler(
+	logging.StreamHandler(sys.stderr)
+)
 logger.info('[+] Initializing bot..')
 
 
@@ -105,14 +108,14 @@ class CustomClient(discord.Client):
 
 
 	async def on_ready(self):
-		logger.info(f'{self.user} has connected to Discord!')
+		logger.info(f'[+] {self.user} has connected to Discord!')
 		
 		guild = discord.utils.get(self.guilds, name=settings.DISCORD_GUILD)
 
 		if guild:
 			logger.info(
-				f'{self.user} is connected to the following guild:\n'
-				f'{guild.name}(id: {guild})'
+				f'[+] {self.user} is connected to the following guild:\n'
+				f'[+] {guild.name} (id: {guild.id})'
 			)
 		else:
 			logger.error(f'[+] Cannot join to server {settings.DISCORD_GUILD}')
