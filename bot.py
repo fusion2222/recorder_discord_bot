@@ -15,6 +15,17 @@ print('[+] Initializing bot..')
 
 
 class CustomClient(discord.Client):
+	COMMAND_LOW_PITCH_BLEEP = '!bleep_low'
+	COMMAND_HIGH_PITCH_BLEEP = '!bleep_high'
+	COMMAND_RECORDING_START = '!rec_start'
+	COMMAND_RECORDING_STOP = '!rec_stop'
+
+	COMMANDS = (
+		COMMAND_LOW_PITCH_BLEEP,
+		COMMAND_HIGH_PITCH_BLEEP,
+		COMMAND_RECORDING_START,
+		COMMAND_RECORDING_STOP
+	)
 
 	COUNTDOWN_MESSAGES = (
 		':five:',
@@ -54,17 +65,22 @@ class CustomClient(discord.Client):
 			).total_seconds()
 		)
 
-	async def _write_countdown_msg(self, msg, text_channel, voice_client, is_last=False):
+	async def write_countdown_msg(self, msg, text_channel, voice_client, is_last=False):
 		"""
 			TODO: Find a way how to load single strema into memory and
 				  then reuse it. instead of loading it from file every time.
 		"""
-
+		dirname = os.path.dirname(__file__)
+		
 		audio_source = discord.FFmpegOpusAudio(
-			'media/high_pitch_lq.mp3' if is_last else 'media/low_pitch_lq.mp3'
+			os.path.join(
+				dirname, 'media/high_pitch.mp3' if is_last else 'media/low_pitch.mp3'
+			)
 		)
 
-		await text_channel.send(content=msg)
+		if not (msg is None or msg == ''):
+			await text_channel.send(content=msg)
+
 		if voice_client.is_playing():
 			voice_client.stop();
 
@@ -80,7 +96,7 @@ class CustomClient(discord.Client):
 
 		for i, msg in enumerate(self.COUNTDOWN_MESSAGES):
 			is_last = i == len(self.COUNTDOWN_MESSAGES) - 1
-			await self._write_countdown_msg(msg, text_channel, voice_client, is_last)
+			await self.write_countdown_msg(msg, text_channel, voice_client, is_last)
 
 		await voice_client.disconnect()
 
@@ -99,7 +115,7 @@ class CustomClient(discord.Client):
 			print(f'[+] Cannot join to server {settings.DISCORD_GUILD}')
 
 	async def on_message(self, message):
-		if not is_bot_commander(message.author) or message.content not in ('!rec_start', '!rec_stop'):
+		if not is_bot_commander(message.author) or message.content not in self.COMMANDS:
 			return
 
 		text_channel = message.channel
@@ -108,7 +124,17 @@ class CustomClient(discord.Client):
 		if not voice_channel_twin:
 			return
 
-		if message.content == '!rec_start':
+		if message.content == self.COMMAND_LOW_PITCH_BLEEP:
+			voice_client = await voice_channel_twin.connect()
+			await self.write_countdown_msg(None, text_channel, voice_client, False)
+			await voice_client.disconnect()
+	
+		elif message.content == self.COMMAND_HIGH_PITCH_BLEEP:
+			voice_client = await voice_channel_twin.connect()
+			await self.write_countdown_msg(None, text_channel, voice_client, True)
+			await voice_client.disconnect()
+
+		elif message.content == self.COMMAND_RECORDING_START:
 			prefixed_name = prefix_channel_name(voice_channel_twin.name)
 
 			if prefixed_name == voice_channel_twin.name:
@@ -128,7 +154,7 @@ class CustomClient(discord.Client):
 			self.recording_beginning = datetime.now()
 			await voice_channel_twin.edit(name=prefixed_name)
 
-		elif message.content == '!rec_stop':
+		elif message.content == self.COMMAND_RECORDING_STOP:
 			unprefixed_name = unprefix_channel_name(voice_channel_twin.name)
 			if unprefixed_name == voice_channel_twin.name:
 				await text_channel.send(
@@ -138,7 +164,8 @@ class CustomClient(discord.Client):
 
 			await voice_channel_twin.edit(name=unprefixed_name)
 			await text_channel.send(content='Nahrávanie ukončené!')
-			
+
 
 client = CustomClient()
-client.run(settings.DISCORD_TOKEN)
+client.run(settings.DISCORD_TOKEN)  
+# Find a smart way how to logout
