@@ -145,14 +145,14 @@ class CustomClient(discord.Client):
 
 			if prefixed_name == voice_channel_twin.name:
 				await text_channel.send(
-					content='Nemôžem spustiť nahrávanie. Voice Kanál je ON AIR...'
+					content='Nemôžem spustiť vysielanie. Voice Kanál je ON AIR...'
 				)
 				return
 			
 			if not self.recording_limit_passed:
 				readable_expire_time = seconds_to_digital(self.limit_expires_in)
 				await text_channel.send(
-					content=f'Nemôžem spustiť nahrávanie... Discord Limit expiruje za {readable_expire_time} sekúnd.'
+					content=f'Nemôžem spustiť vysielanie... Discord Limit expiruje za {readable_expire_time} sekúnd.'
 				)
 				return
 
@@ -164,12 +164,12 @@ class CustomClient(discord.Client):
 			unprefixed_name = unprefix_channel_name(voice_channel_twin.name)
 			if unprefixed_name == voice_channel_twin.name:
 				await text_channel.send(
-					content='Nemôžem zastaviť nahrávanie pretože žiadne aktuálne nie je spustené.'
+					content='Nemôžem zastaviť vysielanie, pretože žiadne aktuálne nie je spustené.'
 				)
 				return
 
 			await voice_channel_twin.edit(name=unprefixed_name)
-			await text_channel.send(content='Nahrávanie ukončené!')
+			await text_channel.send(content='Streaming ukončený!')
 
 
 client = CustomClient()
